@@ -1,0 +1,22 @@
+# Build output
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Coverage reports
+coverage/
+
+# Logs
+*.log
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
