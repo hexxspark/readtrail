@@ -1,0 +1,29 @@
+{
+  "name": "linkmark",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Smart link history tracker that automatically marks and remembers visited links",
+  "author": "HexxSpark",
+  "license": "MIT",
+  "scripts": {
+    "dev": "rollup -c rollup.dev.mjs -w",
+    "serve": "node scripts/serve.mjs",
+    "start": "concurrently \"npm run serve\" \"npm run dev\"",
+    "build": "rollup -c rollup.prod.mjs",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\" \"*.json\" \"scripts/**/*.mjs\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"*.{js,mjs,json}\" \"scripts/**/*.mjs\""
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-typescript": "^12.1.1",
+    "@types/node": "^22.9.0",
+    "@types/tampermonkey": "^5.0.3",
+    "concurrently": "^9.1.0",
+    "prettier": "^3.3.3",
+    "rollup": "^4.25.0",
+    "rollup-plugin-userscript-metablock": "^0.4.2",
+    "typescript": "^5.6.3"
+  },
+  "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee"
+}

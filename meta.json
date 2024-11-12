@@ -1,0 +1,13 @@
+{
+  "name": "LinkMark - Advanced Link History Tracker",
+  "namespace": "http://tampermonkey.net/",
+  "version": "1.0.0",
+  "description": "Smart link history tracker that automatically marks and remembers visited links",
+  "author": "HexxSpark",
+  "match": ["*://*/*"],
+  "grant": ["GM_getValue", "GM_setValue"],
+  "license": "MIT",
+  "run-at": "document-end",
+  "homepage": "https://github.com/hexxspark/linkmark",
+  "supportURL": "https://github.com/hexxspark/linkmark/issues"
+}
