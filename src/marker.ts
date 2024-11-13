@@ -2,15 +2,26 @@ import { Storage } from './storage';
 import { CONSTANTS } from './constants';
 import { isDarkMode, findReplyCount, isForumThread, isMagnetLink } from './utils';
 
+const RIGHT_CLICK_KEY = 'LinkMark_RightClick';
+const DEFAULT_OPEN_TIMEOUT = 10000; // Default time limit is 10 seconds
+
 export class LinkMarker {
   private storage: Storage;
   private activeLinks: Set<HTMLAnchorElement>;
   private isDark: boolean;
+  private openTimeLimit: number;
 
-  constructor() {
+  constructor(openTimeout: number = DEFAULT_OPEN_TIMEOUT) {
     this.storage = new Storage();
     this.activeLinks = new Set();
     this.isDark = isDarkMode();
+    this.openTimeLimit = openTimeout;
+
+    if (document.readyState === 'complete') {
+      this.checkNewTabOpen();
+    } else {
+      window.addEventListener('load', () => this.checkNewTabOpen());
+    }
   }
 
   private initStyles(): void {
@@ -28,24 +39,17 @@ export class LinkMarker {
   }
 
   private bindEvents(): void {
-    // 点击事件处理
+    // Click event handling
     document.addEventListener('click', this.handleClick.bind(this));
     document.addEventListener('auxclick', this.handleClick.bind(this));
     document.addEventListener('contextmenu', this.handleContextMenu.bind(this));
 
-    // 存储事件
+    // Storage event
     window.addEventListener('storage', this.handleStorageEvent.bind(this));
 
-    // 动态内容监听
+    // Dynamic content observation
     const observer = new MutationObserver(this.handleMutations.bind(this));
     observer.observe(document.body, { childList: true, subtree: true });
-
-    // 页面加载检查
-    if (document.readyState === 'complete') {
-      this.checkNewTabOpen();
-    } else {
-      window.addEventListener('load', () => this.checkNewTabOpen());
-    }
   }
 
   private handleClick(event: MouseEvent): void {
@@ -54,7 +58,7 @@ export class LinkMarker {
     const target = (event.target as Element).closest('a') as HTMLAnchorElement;
     if (!target || (!isForumThread(target) && !isMagnetLink(target))) return;
 
-    // 中键点击或普通点击
+    // Middle click or normal click
     if ((event.type === 'auxclick' && event.button === 1) ||
       (event.type === 'click' && !event.ctrlKey && !event.metaKey)) {
       const replyCount = findReplyCount(target);
@@ -66,8 +70,8 @@ export class LinkMarker {
     const target = (event.target as Element).closest('a') as HTMLAnchorElement;
     if (!target || (!isForumThread(target) && !isMagnetLink(target))) return;
 
-    // 记录右键点击的链接信息
-    sessionStorage.setItem('LinkMark_RightClick', JSON.stringify({
+    // Record right-clicked link information
+    localStorage.setItem(RIGHT_CLICK_KEY, JSON.stringify({
       url: target.href,
       time: Date.now(),
       replyCount: findReplyCount(target)
@@ -75,23 +79,25 @@ export class LinkMarker {
   }
 
   private checkNewTabOpen(): void {
-    // 检查是否是从右键菜单打开的新标签页
-    const rightClickData = sessionStorage.getItem('LinkMark_RightClick');
+    // Check if the new tab was opened from the right-click menu
+    const rightClickData = localStorage.getItem(RIGHT_CLICK_KEY);
     if (rightClickData) {
       try {
         const { url, time, replyCount } = JSON.parse(rightClickData);
-        // 检查当前URL是否匹配，且在5秒内打开的
-        if (url === window.location.href && (Date.now() - time) < 5000) {
+        // Check if the current URL matches and was opened within the configured time limit
+        if (url === window.location.href && (Date.now() - time) < this.openTimeLimit) {
           this.markAsRead(url, replyCount);
-          sessionStorage.removeItem('LinkMark_RightClick');
+          localStorage.removeItem(RIGHT_CLICK_KEY);
           return;
+        } else {
+          console.log(`LinkMark: Timeout exceeded for URL ${url}`);
         }
       } catch (e) {
         console.error('Failed to parse right click data:', e);
       }
     }
 
-    // 检查是否是从其他页面打开的
+    // Check if the current page was opened from another page
     const currentUrl = window.location.href;
     const referrer = document.referrer;
     if (referrer && (
