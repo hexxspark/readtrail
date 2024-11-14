@@ -1,5 +1,5 @@
 export const CONSTANTS = {
-  STORAGE_PREFIX: "LinkMark_",
+  STORAGE_PREFIX: "linkmark:",
   SELECTORS: {
     FORUM_ELEMENTS:
       ".thread, .post, .topic, .discussion, .forum, .message, .entry, .comment",
@@ -10,9 +10,8 @@ export const CONSTANTS = {
     FORUM: /\/(?:t|threads|topic|post|p|thread|view|discussion)\//,
     KEYWORDS: ["thread", "topic", "view"] as const,
   },
-  EVENTS: {
-    UPDATE: "linkMarkUpdate",
-    STORAGE: "LinkMark_Update",
+  EVENT: {
+    STORAGE: "linkmark:storage",
   },
   STYLES: {
     HIGHLIGHT: {

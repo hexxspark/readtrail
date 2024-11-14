@@ -21,7 +21,7 @@ export function isDarkMode(): boolean {
 export function findReplyCount(element: HTMLElement): number {
   const container = element.closest(CONSTANTS.SELECTORS.FORUM_ELEMENTS);
   const countElement = container?.querySelector(
-    CONSTANTS.SELECTORS.REPLY_COUNTS,
+    CONSTANTS.SELECTORS.REPLY_COUNTS
   );
   return countElement ? parseInt(countElement.textContent || "0") || 0 : 0;
 }
@@ -30,7 +30,7 @@ export function isForumThread(link: HTMLAnchorElement): boolean {
   return (
     CONSTANTS.URL_PATTERNS.FORUM.test(link.href) ||
     CONSTANTS.URL_PATTERNS.KEYWORDS.some((keyword) =>
-      link.href.includes(keyword),
+      link.href.includes(keyword)
     ) ||
     link.closest(CONSTANTS.SELECTORS.FORUM_ELEMENTS) !== null
   );
@@ -38,4 +38,16 @@ export function isForumThread(link: HTMLAnchorElement): boolean {
 
 export function isMagnetLink(link: HTMLAnchorElement): boolean {
   return link.href.startsWith("magnet:");
+}
+
+export function hashCode(str: string): number {
+  let hash = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0; // Convert to 32bit integer
+  }
+
+  return hash >>> 0; // Convert to unsigned 32-bit integer
 }
