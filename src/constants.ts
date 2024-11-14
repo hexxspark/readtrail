@@ -12,11 +12,5 @@ export const CONSTANTS = {
   },
   EVENT: {
     STORAGE: "linkmark:storage",
-  },
-  STYLES: {
-    HIGHLIGHT: {
-      light: "rgba(240, 240, 240, 1)",
-      dark: "rgba(1, 1, 1, 0.4)",
-    },
-  },
+  }
 } as const;

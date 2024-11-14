@@ -16,7 +16,7 @@ export default defineConfig({
         match: "*://*/*",
         ...metadata as MonkeyUserScript,
       },
-    }),
+    })
   ],
   server: {
     port: 3000,
