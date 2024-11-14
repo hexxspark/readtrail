@@ -2,6 +2,7 @@ import { Storage } from "./storage";
 import { CONSTANTS } from "./constants";
 import { isDarkMode, findReplyCount, isMarkableLink } from "./utils";
 import type { LinkRecord } from "./types";
+import log from "./logger";
 
 export class LinkMarker {
   private storage: Storage;
@@ -20,7 +21,7 @@ export class LinkMarker {
   }
 
   private initStyles(): void {
-    console.debug("Initializing styles");
+    log.debug("Initializing styles");
     const style = document.createElement("style");
     style.textContent = `
       .link-mark-highlighted {
@@ -39,7 +40,7 @@ export class LinkMarker {
   }
 
   private bindEvents(): void {
-    console.debug("Binding events");
+    log.debug("Binding events");
     // Storage event
     window.addEventListener("storage", this.handleStorageEvent.bind(this));
 
@@ -60,21 +61,20 @@ export class LinkMarker {
         ) ||
         currentUrl.startsWith("magnet:"))
     ) {
-      const replyCount = findReplyCount(document.body);
-      this.markAsRead(currentUrl, replyCount);
+      this.markAsRead(currentUrl);
     }
   }
 
   private handleStorageEvent(event: StorageEvent): void {
-    console.debug("Storage event detected:", event.key);
+    log.debug("Storage event detected:", event.key);
     if (event.key !== CONSTANTS.EVENT.STORAGE) return;
     try {
       const value = JSON.parse(event.newValue || "{}");
-      console.debug("Parsed storage event data:", value);
+      log.debug("Parsed storage event data:", value);
       // Allow a small delay for the storage to update
       setTimeout(() => this.refreshLinks(), 100);
     } catch (error) {
-      console.error("Storage update error:", error);
+      log.error("Storage update error:", error);
     }
   }
 
@@ -108,12 +108,11 @@ export class LinkMarker {
     );
   }
 
-  private async markAsRead(url: string, replyCount: number): Promise<void> {
-    console.debug(`Marking as read: ${url} with reply count: ${replyCount}`);
+  private async markAsRead(url: string): Promise<void> {
+    log.debug(`Marking as read: ${url}`);
     await this.storage.set(url, {
       url,
       timestamp: Date.now(),
-      replyCount,
     });
 
     await this.updateAllMatchingLinks(url);
@@ -127,7 +126,7 @@ export class LinkMarker {
         await this.markLink(url, link, record);
       }
     } catch (error) {
-      console.error(`Error retrieving data for: ${url}`, error);
+      log.error(`Error retrieving data for: ${url}`, error);
     }
   }
 
@@ -136,25 +135,20 @@ export class LinkMarker {
     link: HTMLAnchorElement,
     record: LinkRecord
   ): Promise<void> {
-    if (link.classList.contains("link-mark-highlighted")) {
+    if (link.classList.contains("link-marked")) {
       return;
     }
 
-    console.debug(`Marking link: ${url}`);
+    log.debug(`Marking link: ${url}`);
     try {
-      link.classList.add("link-mark-highlighted");
-      link.title = `Read on ${new Date(
-        record.timestamp
-      ).toLocaleString()} - Replies: ${record.replyCount}${
-        record.note ? ` - Note: ${record.note}` : ""
-      }`;
+      link.classList.add("link-marked");
     } catch (error) {
-      console.error(`Error marking link for: ${url}`, error);
+      log.error(`Error marking link for: ${url}`, error);
     }
   }
 
   private async updateAllMatchingLinks(url: string): Promise<void> {
-    console.debug(`Updating all matching links for: ${url}`);
+    log.debug(`Updating all matching links for: ${url}`);
     const links = Array.from(document.querySelectorAll(`a[href='${url}']`));
     const record = await this.storage.get(url);
 
@@ -168,22 +162,22 @@ export class LinkMarker {
   }
 
   private refreshLinks(): void {
-    console.debug("Refreshing links");
+    log.debug("Refreshing links");
     this.activeLinks.forEach((link) => {
       this.checkAndMarkLink(link);
     });
   }
 
   public initialize(): void {
-    console.debug("Initializing script");
+    log.debug("Initializing script");
     this.initStyles();
     this.bindEvents();
-    this.initializeActiveLinks();
+    this.initActiveLinks();
     this.refreshLinks();
-    console.debug("Initialization complete");
+    log.debug("Initialization complete");
   }
 
-  private initializeActiveLinks() {
+  private initActiveLinks() {
     this.activeLinks.clear();
     const links = document.querySelectorAll("a");
     links.forEach((link) => {
@@ -191,6 +185,6 @@ export class LinkMarker {
         this.activeLinks.add(link as HTMLAnchorElement);
       }
     });
-    console.debug("Initialized active links:", this.activeLinks);
+    log.debug("Initialized active links:", this.activeLinks);
   }
 }

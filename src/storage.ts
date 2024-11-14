@@ -17,10 +17,7 @@ export class Storage {
     }
 
     return (
-      "timestamp" in data &&
-      typeof (data as LinkRecord).timestamp === "number" &&
-      "replyCount" in data &&
-      typeof (data as LinkRecord).replyCount === "number"
+      "timestamp" in data && typeof (data as LinkRecord).timestamp === "number"
     );
   }
 
@@ -41,7 +38,7 @@ export class Storage {
   }
 
   private async persist(key: string, data: LinkRecord): Promise<void> {
-    console.debug("Persisting data:", { key, data});
+    console.debug("Persisting data:", { key, data });
     await GM.setValue(key, JSON.stringify(data));
     // Trigger a storage event to notify other tabs
     await localStorage.setItem(
