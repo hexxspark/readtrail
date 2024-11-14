@@ -1,0 +1,127 @@
+import { isMagnetLink } from "./utils";
+
+export class StyleManager {
+    private static readonly STYLES = `
+      .linkmark-read {
+        display: inline !important;
+        padding: 2px 8px 2px 16px !important;
+        margin: 2px 0 !important;
+        border-radius: 4px !important;
+        background-color: var(--linkmark-bg-color, rgba(0, 0, 0, 0.08)) !important;
+        box-decoration-break: clone !important;
+        -webkit-box-decoration-break: clone !important;
+        vertical-align: text-top !important;
+        text-decoration: none !important;
+        line-height: 1.2 !important;
+        position: relative !important;
+        opacity: 0.85 !important;
+      }
+  
+      .linkmark-read:not(.linkmark-magnet)::before {
+        content: "" !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        width: 8px !important;
+        background: var(--linkmark-accent-color) !important;
+        border-top-left-radius: 4px !important;
+        border-bottom-left-radius: 4px !important;
+        opacity: 0.8 !important;
+      }
+  
+      .linkmark-magnet {
+        padding: 2px 8px !important;
+      }
+  
+      .linkmark-read:hover {
+        opacity: 1 !important;
+        transition: all 0.2s ease !important;
+      }
+  
+      .linkmark-read:hover:not(.linkmark-magnet)::before {
+        opacity: 1 !important;
+        transition: opacity 0.2s ease !important;
+      }
+  
+      .linkmark-read[style*="display: block"],
+      .linkmark-read[style*="display:block"] {
+        display: inline !important;
+      }
+    `;
+  
+    private styleElement: HTMLStyleElement | null = null;
+  
+    public initialize(): void {
+      if (!this.styleElement) {
+        this.styleElement = document.createElement('style');
+        this.styleElement.textContent = StyleManager.STYLES;
+        document.head.appendChild(this.styleElement);
+      }
+    }
+  
+    public cleanup(): void {
+      if (this.styleElement && document.head.contains(this.styleElement)) {
+        document.head.removeChild(this.styleElement);
+        this.styleElement = null;
+      }
+    }
+  
+    private getBgColor(element: HTMLElement): string {
+      const backgroundColor = window.getComputedStyle(element).backgroundColor;
+      if (
+        backgroundColor === "rgba(0, 0, 0, 0)" ||
+        backgroundColor === "transparent"
+      ) {
+        return element.parentElement
+          ? this.getBgColor(element.parentElement)
+          : window.getComputedStyle(document.body).backgroundColor;
+      }
+      return backgroundColor;
+    }
+  
+    private getLuminance(color: string): number {
+      const rgb = color.match(/\d+/g)?.map(Number) || [255, 255, 255];
+      const [r, g, b] = rgb.map((c) => {
+        c = c / 255;
+        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    }
+  
+    private getThemeColors(element: HTMLElement) {
+      const bgColor = this.getBgColor(element);
+      const luminance = this.getLuminance(bgColor);
+      const isDark = luminance <= 0.5;
+  
+      if (isDark) {
+        return {
+          backgroundColor: 'rgba(255, 255, 255, 0.12)',
+          accentColor: 'rgba(187, 134, 252, 0.85)'  // 亮紫色
+        };
+      } else {
+        return {
+          backgroundColor: 'rgba(0, 0, 0, 0.06)',
+          accentColor: 'rgba(33, 150, 243, 0.75)'   // 蓝色
+        };
+      }
+    }
+    
+    public markLink(link: HTMLAnchorElement): void {
+        const computedStyle = window.getComputedStyle(link);
+        if (computedStyle.display === 'block') {
+          link.style.display = 'inline-block';
+        }
+    
+        const colors = this.getThemeColors(link);
+        link.style.setProperty('--linkmark-bg-color', colors.backgroundColor);
+        link.style.setProperty('--linkmark-accent-color', colors.accentColor);
+        
+        link.classList.add("linkmark-read");
+        
+        // 使用 isMagnetLink 函数判断
+        if (isMagnetLink(link)) {
+          link.classList.add("linkmark-magnet");
+        }
+      }
+  }
