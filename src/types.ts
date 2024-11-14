@@ -1,7 +1,6 @@
 export interface LinkRecord {
   url: string;
   timestamp: number;
-  replyCount: number;
   note?: string;
 }
 

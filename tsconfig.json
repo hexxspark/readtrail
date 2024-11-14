@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
+    "moduleResolution": "node",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "types": ["tampermonkey"],
     "strict": true,
