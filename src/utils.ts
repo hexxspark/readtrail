@@ -18,15 +18,15 @@ export function isDarkMode(): boolean {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b < 100;
 }
 
-export function findReplyCount(element: HTMLElement): number {
-  const container = element.closest(CONSTANTS.SELECTORS.FORUM_ELEMENTS);
-  const countElement = container?.querySelector(
-    CONSTANTS.SELECTORS.REPLY_COUNTS
-  );
-  return countElement ? parseInt(countElement.textContent || "0") || 0 : 0;
-}
-
 export function isForumThread(link: HTMLAnchorElement): boolean {
+  if (!link?.href) return false;
+
+  // 检查链接文本是否只包含数字
+  const linkText = link.textContent?.trim() || '';
+  if (/^\d+$/.test(linkText)) {
+    return false;
+  }
+
   return (
     CONSTANTS.URL_PATTERNS.FORUM.test(link.href) ||
     CONSTANTS.URL_PATTERNS.KEYWORDS.some((keyword) =>
@@ -37,6 +37,7 @@ export function isForumThread(link: HTMLAnchorElement): boolean {
 }
 
 export function isMagnetLink(link: HTMLAnchorElement): boolean {
+  if (!link?.href) return false;
   return link.href.startsWith("magnet:");
 }
 

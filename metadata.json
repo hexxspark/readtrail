@@ -6,5 +6,8 @@
   "run-at": "document-end",
   "homepage": "https://github.com/hexxspark/linkmark",
   "supportURL": "https://github.com/hexxspark/linkmark/issues",
-  "grant": ["GM.getValue", "GM.setValue"]
+  "grant": [
+    "GM.getValue", 
+    "GM.setValue"
+  ]
 }
