@@ -1,4 +1,4 @@
-export interface LinkEntry {
+export interface LinkRecord {
   url: string;
   timestamp: number;
   replyCount: number;

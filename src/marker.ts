@@ -6,22 +6,19 @@ import {
   isForumThread,
   isMagnetLink,
 } from "./utils";
-import { History, LinkEntry } from "./types";
-
-const RIGHT_CLICK_KEY = "linkmark:right-click";
-const DEFAULT_OPEN_TIMEOUT = 10000; // Default time limit is 10 seconds
+import type { LinkRecord } from "./types";
 
 export class LinkMarker {
   private storage: Storage;
   private activeLinks: Set<HTMLAnchorElement>;
   private isDark: boolean;
-  private openTimeLimit: number;
+  // private openTimeLimit: number;
 
-  constructor(openTimeout: number = DEFAULT_OPEN_TIMEOUT) {
+  constructor() {
     this.storage = new Storage();
     this.activeLinks = new Set();
     this.isDark = isDarkMode();
-    this.openTimeLimit = openTimeout;
+    // this.openTimeLimit = openTimeout;
 
     if (document.readyState === "complete") {
       this.checkNewTabOpen();
@@ -52,7 +49,6 @@ export class LinkMarker {
     // Click event handling
     document.addEventListener("click", this.handleClick.bind(this));
     document.addEventListener("auxclick", this.handleClick.bind(this));
-    document.addEventListener("contextmenu", this.handleContextMenu.bind(this));
 
     // Storage event
     window.addEventListener("storage", this.handleStorageEvent.bind(this));
@@ -78,43 +74,7 @@ export class LinkMarker {
     }
   }
 
-  private handleContextMenu(event: MouseEvent): void {
-    const target = (event.target as Element).closest("a") as HTMLAnchorElement;
-    if (!target || (!isForumThread(target) && !isMagnetLink(target))) return;
-
-    // Record right-clicked link information
-    localStorage.setItem(
-      RIGHT_CLICK_KEY,
-      JSON.stringify({
-        url: target.href,
-        time: Date.now(),
-        replyCount: findReplyCount(target),
-      })
-    );
-  }
-
   private checkNewTabOpen(): void {
-    // Check if the new tab was opened from the right-click menu
-    const rightClickData = localStorage.getItem(RIGHT_CLICK_KEY);
-    if (rightClickData) {
-      try {
-        const { url, time, replyCount } = JSON.parse(rightClickData);
-        // Check if the current URL matches and was opened within the configured time limit
-        if (
-          url === window.location.href &&
-          Date.now() - time < this.openTimeLimit
-        ) {
-          this.markAsRead(url, replyCount);
-          localStorage.removeItem(RIGHT_CLICK_KEY);
-          return;
-        } else {
-          console.log(`LinkMark: Timeout exceeded for URL ${url}`);
-        }
-      } catch (e) {
-        console.error("Failed to parse right click data:", e);
-      }
-    }
-
     // Check if the current page was opened from another page
     const currentUrl = window.location.href;
     const referrer = document.referrer;
@@ -161,16 +121,22 @@ export class LinkMarker {
 
   private async updateNewlyAddedLinks(): Promise<void> {
     const links = Array.from(document.querySelectorAll("a"));
-    const newLinks = links.filter(link => 
-      !this.activeLinks.has(link as HTMLAnchorElement) &&
-      (isForumThread(link as HTMLAnchorElement) || isMagnetLink(link as HTMLAnchorElement))
+    const newLinks = links.filter(
+      (link) =>
+        !this.activeLinks.has(link as HTMLAnchorElement) &&
+        (isForumThread(link as HTMLAnchorElement) ||
+          isMagnetLink(link as HTMLAnchorElement))
     );
 
     for (const link of newLinks) {
       this.activeLinks.add(link as HTMLAnchorElement);
     }
 
-    await Promise.all(newLinks.map(link => this.checkAndHighlightLink(link as HTMLAnchorElement)));
+    await Promise.all(
+      newLinks.map((link) =>
+        this.checkAndHighlightLink(link as HTMLAnchorElement)
+      )
+    );
   }
 
   private async markAsRead(url: string, replyCount: number): Promise<void> {
@@ -179,7 +145,6 @@ export class LinkMarker {
       url,
       timestamp: Date.now(),
       replyCount,
-      note: "",
     });
 
     await this.updateAllMatchingLinks(url);
@@ -199,7 +164,11 @@ export class LinkMarker {
     }
   }
 
-  private async highlightLink(url: string, link: HTMLAnchorElement, entry: LinkEntry): Promise<void> {
+  private async highlightLink(
+    url: string,
+    link: HTMLAnchorElement,
+    entry: LinkRecord
+  ): Promise<void> {
     console.debug(`Highlighting link: ${url}`);
     try {
       link.classList.add("link-mark-highlighted");
@@ -219,7 +188,11 @@ export class LinkMarker {
     const entry = await this.storage.get(url);
 
     if (entry) {
-      await Promise.all(links.map(link => this.highlightLink(url, link as HTMLAnchorElement, entry)));
+      await Promise.all(
+        links.map((link) =>
+          this.highlightLink(url, link as HTMLAnchorElement, entry)
+        )
+      );
     }
   }
 
