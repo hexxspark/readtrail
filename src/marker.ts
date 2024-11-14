@@ -1,11 +1,6 @@
 import { Storage } from "./storage";
 import { CONSTANTS } from "./constants";
-import {
-  isDarkMode,
-  findReplyCount,
-  isForumThread,
-  isMagnetLink,
-} from "./utils";
+import { isDarkMode, findReplyCount, isMarkableLink } from "./utils";
 import type { LinkRecord } from "./types";
 
 export class LinkMarker {
@@ -28,6 +23,7 @@ export class LinkMarker {
   }
 
   private initStyles(): void {
+    console.debug("Initializing styles");
     const style = document.createElement("style");
     style.textContent = `
       .link-mark-highlighted {
@@ -46,6 +42,7 @@ export class LinkMarker {
   }
 
   private bindEvents(): void {
+    console.debug("Binding events");
     // Storage event
     window.addEventListener("storage", this.handleStorageEvent.bind(this));
 
@@ -77,10 +74,7 @@ export class LinkMarker {
     try {
       const { key, data } = JSON.parse(event.newValue || "{}");
       console.debug("Parsed storage event data:", { key, data });
-
-      setTimeout(() => {
-        this.refreshHighlights();
-      }, 500);
+      this.refreshHighlights();
     } catch (error) {
       console.error("Storage update error:", error);
     }
@@ -104,8 +98,7 @@ export class LinkMarker {
     const newLinks = links.filter(
       (link) =>
         !this.activeLinks.has(link as HTMLAnchorElement) &&
-        (isForumThread(link as HTMLAnchorElement) ||
-          isMagnetLink(link as HTMLAnchorElement))
+        isMarkableLink(link as HTMLAnchorElement)
     );
 
     for (const link of newLinks) {
@@ -188,10 +181,7 @@ export class LinkMarker {
 
     const links = document.querySelectorAll("a");
     links.forEach((link) => {
-      if (
-        isForumThread(link as HTMLAnchorElement) ||
-        isMagnetLink(link as HTMLAnchorElement)
-      ) {
+      if (isMarkableLink(link as HTMLAnchorElement)) {
         this.activeLinks.add(link as HTMLAnchorElement);
         this.checkAndHighlightLink(link as HTMLAnchorElement);
       }

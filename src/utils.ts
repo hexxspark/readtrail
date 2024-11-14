@@ -40,6 +40,10 @@ export function isMagnetLink(link: HTMLAnchorElement): boolean {
   return link.href.startsWith("magnet:");
 }
 
+export function isMarkableLink(link: HTMLAnchorElement): boolean {
+  return isForumThread(link) || isMagnetLink(link);
+}
+
 export function hashCode(str: string): number {
   let hash = 0;
 
