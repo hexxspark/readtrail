@@ -1,6 +1,11 @@
 import { Storage } from "./storage";
 import { CONSTANTS } from "./constants";
-import { isDarkMode, findReplyCount, isMarkableLink } from "./utils";
+import {
+  isDarkMode,
+  findReplyCount,
+  isMarkableLink,
+  isMagnetLink,
+} from "./utils";
 import type { LinkRecord } from "./types";
 import log from "./logger";
 
@@ -40,6 +45,11 @@ export class LinkMarker {
   }
 
   private bindEvents(): void {
+    // Click event handling
+    document.addEventListener("click", this.handleClick.bind(this));
+    document.addEventListener("auxclick", this.handleClick.bind(this));
+
+    // Storage event
     log.debug("Binding events");
     // Storage event
     window.addEventListener("storage", this.handleStorageEvent.bind(this));
@@ -47,6 +57,21 @@ export class LinkMarker {
     // Dynamic content observation
     const observer = new MutationObserver(this.handleMutations.bind(this));
     observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  private handleClick(event: MouseEvent): void {
+    if (event.type === "auxclick" && event.button !== 1) return;
+
+    const target = (event.target as Element).closest("a") as HTMLAnchorElement;
+    if (!target || !isMarkableLink(target)) return;
+
+    // Middle click or normal click
+    if (
+      (event.type === "auxclick" && event.button === 1) ||
+      (event.type === "click" && !event.ctrlKey && !event.metaKey)
+    ) {
+      this.markAsRead(target.href);
+    }
   }
 
   private checkNewTabOpen(): void {
