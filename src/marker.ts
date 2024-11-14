@@ -7,14 +7,11 @@ export class LinkMarker {
   private storage: Storage;
   private activeLinks: Set<HTMLAnchorElement>;
   private isDark: boolean;
-  // private openTimeLimit: number;
 
   constructor() {
     this.storage = new Storage();
     this.activeLinks = new Set();
     this.isDark = isDarkMode();
-    // this.openTimeLimit = openTimeout;
-
     if (document.readyState === "complete") {
       this.checkNewTabOpen();
     } else {
@@ -107,9 +104,7 @@ export class LinkMarker {
     }
 
     await Promise.all(
-      newLinks.map((link) =>
-        this.checkAndMarkLink(link as HTMLAnchorElement)
-      )
+      newLinks.map((link) => this.checkAndMarkLink(link as HTMLAnchorElement))
     );
   }
 
@@ -127,9 +122,9 @@ export class LinkMarker {
   private async checkAndMarkLink(link: HTMLAnchorElement): Promise<void> {
     const url = link.href;
     try {
-      const entry = await this.storage.get(url);
-      if (entry) {
-        await this.markLink(url, link, entry);
+      const record = await this.storage.get(url);
+      if (record) {
+        await this.markLink(url, link, record);
       }
     } catch (error) {
       console.error(`Error retrieving data for: ${url}`, error);
@@ -139,15 +134,19 @@ export class LinkMarker {
   private async markLink(
     url: string,
     link: HTMLAnchorElement,
-    entry: LinkRecord
+    record: LinkRecord
   ): Promise<void> {
+    if (link.classList.contains("link-mark-highlighted")) {
+      return;
+    }
+
     console.debug(`Marking link: ${url}`);
     try {
       link.classList.add("link-mark-highlighted");
       link.title = `Read on ${new Date(
-        entry.timestamp
-      ).toLocaleString()} - Replies: ${entry.replyCount}${
-        entry.note ? ` - Note: ${entry.note}` : ""
+        record.timestamp
+      ).toLocaleString()} - Replies: ${record.replyCount}${
+        record.note ? ` - Note: ${record.note}` : ""
       }`;
     } catch (error) {
       console.error(`Error marking link for: ${url}`, error);
@@ -157,12 +156,12 @@ export class LinkMarker {
   private async updateAllMatchingLinks(url: string): Promise<void> {
     console.debug(`Updating all matching links for: ${url}`);
     const links = Array.from(document.querySelectorAll(`a[href='${url}']`));
-    const entry = await this.storage.get(url);
+    const record = await this.storage.get(url);
 
-    if (entry) {
+    if (record) {
       await Promise.all(
         links.map((link) =>
-          this.markLink(url, link as HTMLAnchorElement, entry)
+          this.markLink(url, link as HTMLAnchorElement, record)
         )
       );
     }
@@ -179,13 +178,19 @@ export class LinkMarker {
     console.debug("Initializing script");
     this.initStyles();
     this.bindEvents();
+    this.initializeActiveLinks();
+    this.refreshLinks();
+    console.debug("Initialization complete");
+  }
 
+  private initializeActiveLinks() {
+    this.activeLinks.clear();
     const links = document.querySelectorAll("a");
     links.forEach((link) => {
       if (isMarkableLink(link as HTMLAnchorElement)) {
         this.activeLinks.add(link as HTMLAnchorElement);
-        this.checkAndMarkLink(link as HTMLAnchorElement);
       }
     });
+    console.debug("Initialized active links:", this.activeLinks);
   }
 }
