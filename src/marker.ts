@@ -2,76 +2,49 @@ import { Storage } from "./storage";
 import { CONSTANTS } from "./constants";
 import { isMarkableLink } from "./utils";
 import type { LinkRecord } from "./types";
+import { StyleManager } from "./styles";
 import log from "./logger";
-
-const STYLES = {
-  LINK_MARK: `
-    .linkmark-read {
-      display: inline !important;
-      padding: 1px 4px !important;
-      margin: 2px 0 !important;
-      border-radius: 4px !important;
-      background-color: var(--linkmark-bg-color, rgba(0, 0, 0, 0.08)) !important;
-      box-decoration-break: clone !important;
-      -webkit-box-decoration-break: clone !important;
-      vertical-align: text-top !important;
-      text-decoration: none !important;
-      line-height: 1.2 !important;
-    }
-
-    .linkmark-read[style*="display: block"],
-    .linkmark-read[style*="display:block"] {
-      display: inline !important;
-    }
-  `,
-};
 
 export class LinkMarker {
   private storage: Storage;
+  private styleManager: StyleManager;
   private activeLinks: Set<HTMLAnchorElement>;
 
   constructor() {
     this.storage = new Storage();
+    this.styleManager = new StyleManager();
     this.activeLinks = new Set();
+
     if (document.readyState === "complete") {
       this.checkNewTabOpen();
     } else {
       window.addEventListener("load", () => this.checkNewTabOpen());
     }
   }
+  
+  private async markLink(
+    url: string,
+    link: HTMLAnchorElement,
+    record: LinkRecord
+  ): Promise<void> {
+    if (link.classList.contains("linkmark-read")) return;
 
-  private getBgColor(element: HTMLElement): string {
-    const backgroundColor = window.getComputedStyle(element).backgroundColor;
-    if (
-      backgroundColor === "rgba(0, 0, 0, 0)" ||
-      backgroundColor === "transparent"
-    ) {
-      return element.parentElement
-        ? this.getBgColor(element.parentElement)
-        : window.getComputedStyle(document.body).backgroundColor;
+    log.debug(`Marking link: ${url}`);
+    try {
+      this.styleManager.markLink(link);
+    } catch (error) {
+      log.error(`Error marking link for: ${url}`, error);
     }
-    return backgroundColor;
   }
 
-  private getLuminance(color: string): number {
-    const rgb = color.match(/\d+/g)?.map(Number) || [255, 255, 255];
-    const [r, g, b] = rgb.map((c) => {
-      c = c / 255;
-      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  private async markAsRead(url: string): Promise<void> {
+    log.debug(`Marking as read: ${url}`);
+    await this.storage.set(url, {
+      url,
+      timestamp: Date.now(),
     });
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  }
 
-  private getContrastColor(bgColor: string): string {
-    const luminance = this.getLuminance(bgColor);
-    return luminance > 0.5 ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)";
-  }
-
-  private initStyles(): void {
-    log.debug("Initializing styles");
-    const style = document.createElement("style");
-    style.textContent = STYLES.LINK_MARK;
-    document.head.appendChild(style);
+    await this.updateAllMatchingLinks(url);
   }
 
   private bindEvents(): void {
@@ -154,16 +127,6 @@ export class LinkMarker {
     );
   }
 
-  private async markAsRead(url: string): Promise<void> {
-    log.debug(`Marking as read: ${url}`);
-    await this.storage.set(url, {
-      url,
-      timestamp: Date.now(),
-    });
-
-    await this.updateAllMatchingLinks(url);
-  }
-
   private async checkAndMarkLink(link: HTMLAnchorElement): Promise<void> {
     const url = link.href;
     try {
@@ -173,33 +136,6 @@ export class LinkMarker {
       }
     } catch (error) {
       log.error(`Error retrieving data for: ${url}`, error);
-    }
-  }
-
-  private async markLink(
-    url: string,
-    link: HTMLAnchorElement,
-    record: LinkRecord
-  ): Promise<void> {
-    if (link.classList.contains('linkmark-read')) return;
-
-    log.debug(`Marking link: ${url}`);
-    try {
-      const bgColor = this.getBgColor(link);
-      const luminance = this.getLuminance(bgColor);
-      const backgroundColor = luminance > 0.5 
-        ? 'rgba(0, 0, 0, 0.08)'  
-        : 'rgba(255, 255, 255, 0.08)';
-
-      const computedStyle = window.getComputedStyle(link);
-      if (computedStyle.display === 'block') {
-        link.style.display = 'inline-block';
-      }
-
-      link.style.setProperty('--linkmark-bg-color', backgroundColor);
-      link.classList.add("linkmark-read");
-    } catch (error) {
-      log.error(`Error marking link for: ${url}`, error);
     }
   }
 
@@ -218,7 +154,6 @@ export class LinkMarker {
   }
 
   private refreshLinks(): void {
-    // 只刷新未标记的链接
     const unreadLinks = Array.from(this.activeLinks).filter(
       (link) => !link.classList.contains("linkmark-read")
     );
@@ -229,11 +164,16 @@ export class LinkMarker {
 
   public initialize(): void {
     log.debug("Initializing script");
-    this.initStyles();
+    this.styleManager.initialize();
     this.bindEvents();
     this.initActiveLinks();
     this.refreshLinks();
     log.debug("Initialization complete");
+  }
+
+  public cleanup(): void {
+    this.styleManager.cleanup();
+    this.activeLinks.clear();
   }
 
   private initActiveLinks() {
