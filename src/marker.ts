@@ -50,8 +50,6 @@ export class LinkMarker {
     document.addEventListener("auxclick", this.handleClick.bind(this));
 
     // Storage event
-    log.debug("Binding events");
-    // Storage event
     window.addEventListener("storage", this.handleStorageEvent.bind(this));
 
     // Dynamic content observation
