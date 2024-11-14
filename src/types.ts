@@ -1,11 +1,8 @@
-export interface ReadState {
+export interface LinkEntry {
+  url: string;
   timestamp: number;
   replyCount: number;
   note?: string;
-}
-
-export interface StorageData {
-  [url: string]: ReadState;
 }
 
 export interface ThemeConfig {
@@ -16,5 +13,5 @@ export interface ThemeConfig {
 export interface StorageEvent {
   timestamp: number;
   key: string;
-  data: StorageData;
+  data: History;
 }
