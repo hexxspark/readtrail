@@ -12,7 +12,7 @@ http.createServer((req, res) => {
     // Print request information
     console.log(`Received request: ${req.method} ${req.url}`);
 
-    const filePath = path.join(__dirname, '../dist/linkmark.user.js');
+    const filePath = path.join(__dirname, '../dist/readtrail.user.js');
 
     // Force disable caching
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -42,5 +42,5 @@ http.createServer((req, res) => {
     });
 }).listen(PORT, () => {
     console.log(`Dev server running at http://localhost:10001/`);
-    console.log('Install the dev script from dist/linkmark.dev.user.js');
+    console.log('Install the dev script from dist/readtrail.dev.user.js');
 });

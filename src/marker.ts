@@ -5,7 +5,7 @@ import type { LinkRecord } from "./types";
 import { StyleManager } from "./styles";
 import log from "./logger";
 
-export class LinkMarker {
+export class Marker {
   private storage: Storage;
   private styleManager: StyleManager;
   private activeLinks: Set<HTMLAnchorElement>;
@@ -21,13 +21,13 @@ export class LinkMarker {
       window.addEventListener("load", () => this.checkNewTabOpen());
     }
   }
-  
+
   private async markLink(
     url: string,
     link: HTMLAnchorElement,
     record: LinkRecord
   ): Promise<void> {
-    if (link.classList.contains("linkmark-read")) return;
+    if (link.classList.contains("rt-read")) return;
 
     log.debug(`Marking link: ${url}`);
     try {
@@ -87,10 +87,9 @@ export class LinkMarker {
 
   private handleStorageEvent(event: StorageEvent): void {
     log.debug("Storage event detected:", event.key);
-    if (event.key !== CONSTANTS.EVENT.STORAGE) return;
+    if (event.key !== CONSTANTS.SYNC_EVENT) return;
     try {
       const value = JSON.parse(event.newValue || "{}");
-      log.debug("Parsed storage event data:", value);
       setTimeout(() => this.refreshLinks(), 100);
     } catch (error) {
       log.error("Storage update error:", error);
@@ -155,7 +154,7 @@ export class LinkMarker {
 
   private refreshLinks(): void {
     const unreadLinks = Array.from(this.activeLinks).filter(
-      (link) => !link.classList.contains("linkmark-read")
+      (link) => !link.classList.contains("rt-read")
     );
     unreadLinks.forEach((link) => {
       this.checkAndMarkLink(link);

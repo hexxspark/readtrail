@@ -2,12 +2,12 @@ import { isMagnetLink } from "./utils";
 
 export class StyleManager {
     private static readonly STYLES = `
-      .linkmark-read {
+      .rt-read {
         display: inline !important;
         padding: 2px 8px 2px 16px !important;
         margin: 2px 0 !important;
         border-radius: 4px !important;
-        background-color: var(--linkmark-bg-color, rgba(0, 0, 0, 0.08)) !important;
+        background-color: var(--rt-bg-color, rgba(0, 0, 0, 0.08)) !important;
         box-decoration-break: clone !important;
         -webkit-box-decoration-break: clone !important;
         vertical-align: text-top !important;
@@ -17,35 +17,35 @@ export class StyleManager {
         opacity: 0.85 !important;
       }
   
-      .linkmark-read:not(.linkmark-magnet)::before {
+      .rt-read:not(.rt-magnet)::before {
         content: "" !important;
         position: absolute !important;
         left: 0 !important;
         top: 0 !important;
         bottom: 0 !important;
         width: 8px !important;
-        background: var(--linkmark-accent-color) !important;
+        background: var(--rt-accent-color) !important;
         border-top-left-radius: 4px !important;
         border-bottom-left-radius: 4px !important;
         opacity: 0.8 !important;
       }
   
-      .linkmark-magnet {
+      .rt-magnet {
         padding: 2px 8px !important;
       }
   
-      .linkmark-read:hover {
+      .rt-read:hover {
         opacity: 1 !important;
         transition: all 0.2s ease !important;
       }
   
-      .linkmark-read:hover:not(.linkmark-magnet)::before {
+      .rt-read:hover:not(.rt-magnet)::before {
         opacity: 1 !important;
         transition: opacity 0.2s ease !important;
       }
   
-      .linkmark-read[style*="display: block"],
-      .linkmark-read[style*="display:block"] {
+      .rt-read[style*="display: block"],
+      .rt-read[style*="display:block"] {
         display: inline !important;
       }
     `;
@@ -97,12 +97,12 @@ export class StyleManager {
       if (isDark) {
         return {
           backgroundColor: 'rgba(255, 255, 255, 0.12)',
-          accentColor: 'rgba(187, 134, 252, 0.85)'  // 亮紫色
+          accentColor: 'rgba(187, 134, 252, 0.85)'  // Light purple
         };
       } else {
         return {
           backgroundColor: 'rgba(0, 0, 0, 0.06)',
-          accentColor: 'rgba(33, 150, 243, 0.75)'   // 蓝色
+          accentColor: 'rgba(33, 150, 243, 0.75)'   // Blue
         };
       }
     }
@@ -114,14 +114,14 @@ export class StyleManager {
         }
     
         const colors = this.getThemeColors(link);
-        link.style.setProperty('--linkmark-bg-color', colors.backgroundColor);
-        link.style.setProperty('--linkmark-accent-color', colors.accentColor);
+        link.style.setProperty('--rt-bg-color', colors.backgroundColor);
+        link.style.setProperty('--rt-accent-color', colors.accentColor);
         
-        link.classList.add("linkmark-read");
+        link.classList.add("rt-read");
         
-        // 使用 isMagnetLink 函数判断
+        // Use isMagnetLink function to determine
         if (isMagnetLink(link)) {
-          link.classList.add("linkmark-magnet");
+          link.classList.add("rt-magnet");
         }
       }
   }
