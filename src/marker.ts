@@ -24,7 +24,7 @@ export class LinkMarker {
     log.debug("Initializing styles");
     const style = document.createElement("style");
     style.textContent = `
-      .link-mark-highlighted {
+      .link-marked {
         padding: 2px 4px !important;
         border-radius: 4px !important;
         border: 1px solid rgba(150, 150, 150, 0.8) !important;
