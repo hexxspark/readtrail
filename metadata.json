@@ -1,11 +1,13 @@
 {
-  "name": "LinkMark - Smart Link History Tracker",
+  "name": "ReadTrail - Forum Read Trail",
+  "name:zh-CN": "论坛已读标记器",
+  "description": "Automatically mark forum posts as read",
+  "description:zh-CN": "自动标记论坛已读帖子",
   "namespace": "https://github.com/hexxspark",
-  "description": "Smart link history tracker that automatically marks and remembers visited links",
   "match": ["*://*/*"],
   "run-at": "document-end",
-  "homepage": "https://github.com/hexxspark/linkmark",
-  "supportURL": "https://github.com/hexxspark/linkmark/issues",
+  "homepage": "https://github.com/hexxspark/readtrail",
+  "supportURL": "https://github.com/hexxspark/readtrail/issues",
   "grant": [
     "GM.getValue", 
     "GM.setValue"

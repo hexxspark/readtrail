@@ -8,7 +8,7 @@ export class Storage {
   private getKey(url: string): string {
     const domain = extractDomain(url);
     const hash = hashCode(url);
-    return `linkmark:${domain}:${hash}`;
+    return `${CONSTANTS.PREFIX}:${domain}:${hash}`;
   }
 
   private isLinkEntry(data: unknown): data is LinkRecord {
@@ -42,7 +42,7 @@ export class Storage {
     await GM.setValue(key, JSON.stringify(data));
     // Trigger a storage event to notify other tabs
     await localStorage.setItem(
-      CONSTANTS.EVENT.STORAGE,
+      CONSTANTS.SYNC_EVENT,
       JSON.stringify({
         key,
         ...data,

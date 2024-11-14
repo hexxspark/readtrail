@@ -26,4 +26,4 @@ class Logger {
   }
 }
 
-export default new Logger("linkmark");
+export default new Logger("read-trail");
