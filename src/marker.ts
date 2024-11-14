@@ -72,9 +72,10 @@ export class LinkMarker {
     console.debug("Storage event detected:", event.key);
     if (event.key !== CONSTANTS.EVENT.STORAGE) return;
     try {
-      const { key, data } = JSON.parse(event.newValue || "{}");
-      console.debug("Parsed storage event data:", { key, data });
-      this.refreshHighlights();
+      const value = JSON.parse(event.newValue || "{}");
+      console.debug("Parsed storage event data:", value);
+      // Allow a small delay for the storage to update
+      setTimeout(() => this.refreshLinks(), 100);
     } catch (error) {
       console.error("Storage update error:", error);
     }
@@ -107,7 +108,7 @@ export class LinkMarker {
 
     await Promise.all(
       newLinks.map((link) =>
-        this.checkAndHighlightLink(link as HTMLAnchorElement)
+        this.checkAndMarkLink(link as HTMLAnchorElement)
       )
     );
   }
@@ -123,24 +124,24 @@ export class LinkMarker {
     await this.updateAllMatchingLinks(url);
   }
 
-  private async checkAndHighlightLink(link: HTMLAnchorElement): Promise<void> {
+  private async checkAndMarkLink(link: HTMLAnchorElement): Promise<void> {
     const url = link.href;
     try {
       const entry = await this.storage.get(url);
       if (entry) {
-        await this.highlightLink(url, link, entry);
+        await this.markLink(url, link, entry);
       }
     } catch (error) {
       console.error(`Error retrieving data for: ${url}`, error);
     }
   }
 
-  private async highlightLink(
+  private async markLink(
     url: string,
     link: HTMLAnchorElement,
     entry: LinkRecord
   ): Promise<void> {
-    console.debug(`Highlighting link: ${url}`);
+    console.debug(`Marking link: ${url}`);
     try {
       link.classList.add("link-mark-highlighted");
       link.title = `Read on ${new Date(
@@ -149,7 +150,7 @@ export class LinkMarker {
         entry.note ? ` - Note: ${entry.note}` : ""
       }`;
     } catch (error) {
-      console.error(`Error highlighting link for: ${url}`, error);
+      console.error(`Error marking link for: ${url}`, error);
     }
   }
 
@@ -161,16 +162,16 @@ export class LinkMarker {
     if (entry) {
       await Promise.all(
         links.map((link) =>
-          this.highlightLink(url, link as HTMLAnchorElement, entry)
+          this.markLink(url, link as HTMLAnchorElement, entry)
         )
       );
     }
   }
 
-  private refreshHighlights(): void {
-    console.debug("Refreshing highlights");
+  private refreshLinks(): void {
+    console.debug("Refreshing links");
     this.activeLinks.forEach((link) => {
-      this.checkAndHighlightLink(link);
+      this.checkAndMarkLink(link);
     });
   }
 
@@ -183,7 +184,7 @@ export class LinkMarker {
     links.forEach((link) => {
       if (isMarkableLink(link as HTMLAnchorElement)) {
         this.activeLinks.add(link as HTMLAnchorElement);
-        this.checkAndHighlightLink(link as HTMLAnchorElement);
+        this.checkAndMarkLink(link as HTMLAnchorElement);
       }
     });
   }

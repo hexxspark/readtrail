@@ -41,13 +41,14 @@ export class Storage {
   }
 
   private async persist(key: string, data: LinkRecord): Promise<void> {
+    console.debug("Persisting data:", { key, data});
     await GM.setValue(key, JSON.stringify(data));
     // Trigger a storage event to notify other tabs
     await localStorage.setItem(
       CONSTANTS.EVENT.STORAGE,
       JSON.stringify({
-        timestamp: Date.now(),
-        key: key,
+        key,
+        ...data,
       })
     );
   }
