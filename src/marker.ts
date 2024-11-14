@@ -46,32 +46,12 @@ export class LinkMarker {
   }
 
   private bindEvents(): void {
-    // Click event handling
-    document.addEventListener("click", this.handleClick.bind(this));
-    document.addEventListener("auxclick", this.handleClick.bind(this));
-
     // Storage event
     window.addEventListener("storage", this.handleStorageEvent.bind(this));
 
     // Dynamic content observation
     const observer = new MutationObserver(this.handleMutations.bind(this));
     observer.observe(document.body, { childList: true, subtree: true });
-  }
-
-  private handleClick(event: MouseEvent): void {
-    if (event.type === "auxclick" && event.button !== 1) return;
-
-    const target = (event.target as Element).closest("a") as HTMLAnchorElement;
-    if (!target || (!isForumThread(target) && !isMagnetLink(target))) return;
-
-    // Middle click or normal click
-    if (
-      (event.type === "auxclick" && event.button === 1) ||
-      (event.type === "click" && !event.ctrlKey && !event.metaKey)
-    ) {
-      const replyCount = findReplyCount(target);
-      this.markAsRead(target.href, replyCount);
-    }
   }
 
   private checkNewTabOpen(): void {
@@ -156,8 +136,6 @@ export class LinkMarker {
       const entry = await this.storage.get(url);
       if (entry) {
         await this.highlightLink(url, link, entry);
-      } else {
-        console.debug(`No data found for: ${url}`);
       }
     } catch (error) {
       console.error(`Error retrieving data for: ${url}`, error);
@@ -214,7 +192,6 @@ export class LinkMarker {
         isForumThread(link as HTMLAnchorElement) ||
         isMagnetLink(link as HTMLAnchorElement)
       ) {
-        console.debug(`[Initializing] Found link to highlight: ${link.href}`);
         this.activeLinks.add(link as HTMLAnchorElement);
         this.checkAndHighlightLink(link as HTMLAnchorElement);
       }
