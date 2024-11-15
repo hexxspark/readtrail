@@ -159,5 +159,18 @@ function isDateString(text: string): boolean {
     /^(?:yesterday|today|tomorrow)$/i,
   ];
 
-  return datePatterns.some((pattern) => pattern.test(text.trim()));
+  const excludePatterns = [
+    /^(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+at\s+\d{1,2}:\d{2}\s*[AaPp][Mm]$/,
+    /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4}$/,
+    /^\d{1,2}\s+hours\s+ago$/,
+  ];
+
+  const trimmedText = text.trim();
+
+  // Exclude specific patterns
+  if (excludePatterns.some((pattern) => pattern.test(trimmedText))) {
+    return false;
+  }
+
+  return datePatterns.some((pattern) => pattern.test(trimmedText));
 }

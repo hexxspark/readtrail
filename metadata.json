@@ -1,7 +1,7 @@
 {
   "name": {
-    "": "ReadTrail - Read Trail",
-    "zh": "已读标记器"
+    "": "ReadTrail - Read Mark Assistant",
+    "zh": "已读标记助手"
   },
   "description": {
     "": "Automatically mark posts as read",

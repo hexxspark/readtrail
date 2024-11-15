@@ -27,6 +27,7 @@ export class Marker {
     link: HTMLAnchorElement,
     record: LinkRecord,
   ): Promise<void> {
+    if (!isMarkableLink(link)) return;
     if (link.classList.contains("rt-read")) return;
 
     log.debug(`Marking link: ${url}`);
