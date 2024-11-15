@@ -21,6 +21,6 @@
     "skipChecks": true
   },
   "hooks": {
-    "before:git:release": "pnpm run build"
+    "before:git:release": "pnpm install && pnpm build"
   }
 }
