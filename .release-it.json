@@ -1,7 +1,8 @@
 {
   "plugins": {
     "release-it-pnpm": {
-      "publish": false
+      "publish": false,
+      "disableRelease": true
     },
     "@release-it/conventional-changelog": {
       "preset": "angular",
@@ -18,9 +19,6 @@
     "publish": false,
     "ignoreVersion": true,
     "skipChecks": true
-  },
-  "github": {
-    "release": false
   },
   "hooks": {
     "before:git:release": "pnpm run build"
