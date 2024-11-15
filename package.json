@@ -2,16 +2,19 @@
   "name": "readtrail",
   "version": "1.0.0",
   "type": "module",
-  "description": "Smart link history tracker that automatically marks and remembers visited links",
+  "description": "A userscript to auto mark posts as ready for tampermonkey/violentmonkey/greasemonkey",
   "author": "HexxSpark",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@types/tampermonkey": "^5.0.3",
     "loglevel": "^1.9.2",
+    "prettier": "^3.3.3",
+    "release-it": "^17.10.0",
     "typescript": "^5.6.3",
     "vite": "^5.4.11",
     "vite-plugin-monkey": "^4.0.6"

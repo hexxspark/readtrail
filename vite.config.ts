@@ -14,9 +14,9 @@ export default defineConfig({
         description: pkg.description,
         author: pkg.author,
         match: "*://*/*",
-        ...metadata as MonkeyUserScript,
+        ...(metadata as MonkeyUserScript),
       },
-    })
+    }),
   ],
   server: {
     port: 3000,
