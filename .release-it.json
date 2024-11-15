@@ -1,6 +1,6 @@
 {
   "git": {
-    "tag": true,
+    "tag": "v${version}",
     "commit": true,
     "push": true
   },
@@ -8,10 +8,14 @@
     "publish": false
   },
   "github": {
-    "release": false
+    "release": false,
+    "token": "${GITHUB_TOKEN}"
+  },
+  "changelog": {
+    "releaseNotes": "## [${version}] - ${date}\n\n### Added\n${changelog.added}\n\n### Fixed\n${changelog.fixed}\n\n### Changed\n${changelog.changed}\n\n### Misc\n${changelog.misc}"
   },
   "hooks": {
-    "before:git:release": "npm run build"
+    "before:git:release": "pnpm run build"
   },
   "prompt": {
     "commitMessage": "chore(release): Release ${version}"
