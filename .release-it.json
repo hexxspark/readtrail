@@ -1,0 +1,19 @@
+{
+  "git": {
+    "tag": true,
+    "commit": true,
+    "push": true
+  },
+  "npm": {
+    "publish": false
+  },
+  "github": {
+    "release": false
+  },
+  "hooks": {
+    "before:git:release": "npm run build"
+  },
+  "prompt": {
+    "commitMessage": "chore(release): Release ${version}"
+  }
+}

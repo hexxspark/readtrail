@@ -1,6 +1,6 @@
 export const CONSTANTS = {
   PREFIX: "@rt:",
-  SYNC_EVENT: "@rt:sync",  
+  SYNC_EVENT: "@rt:sync",
   SELECTORS: {
     FORUM_ELEMENTS:
       ".thread, .post, .topic, .discussion, .forum, .message, .entry, .comment",
@@ -18,5 +18,5 @@ export const CONSTANTS = {
     EXCLUDE: /\.(jpg|jpeg|png|gif|webp|css|js|json|xml)$/i,
   },
   // Lowered the minimum length requirement as some titles may be shorter
-  MIN_TITLE_LENGTH: 5, 
+  MIN_TITLE_LENGTH: 5,
 } as const;

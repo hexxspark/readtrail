@@ -46,7 +46,7 @@ export class Storage {
       JSON.stringify({
         key,
         ...data,
-      })
+      }),
     );
   }
 }

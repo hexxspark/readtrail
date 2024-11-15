@@ -25,7 +25,7 @@ export class Marker {
   private async markLink(
     url: string,
     link: HTMLAnchorElement,
-    record: LinkRecord
+    record: LinkRecord,
   ): Promise<void> {
     if (link.classList.contains("rt-read")) return;
 
@@ -51,7 +51,10 @@ export class Marker {
 
   private triggerSyncEvent(): void {
     // 使用 localStorage 触发跨标签页同步
-    localStorage.setItem(CONSTANTS.SYNC_EVENT, JSON.stringify({ timestamp: Date.now() }));
+    localStorage.setItem(
+      CONSTANTS.SYNC_EVENT,
+      JSON.stringify({ timestamp: Date.now() }),
+    );
     localStorage.removeItem(CONSTANTS.SYNC_EVENT);
   }
 
@@ -59,7 +62,10 @@ export class Marker {
     document.addEventListener("click", this.handleClick.bind(this));
     document.addEventListener("auxclick", this.handleClick.bind(this));
     window.addEventListener("storage", this.handleStorageEvent.bind(this));
-    document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this));
+    document.addEventListener(
+      "visibilitychange",
+      this.handleVisibilityChange.bind(this),
+    );
 
     const observer = new MutationObserver(this.handleMutations.bind(this));
     observer.observe(document.body, { childList: true, subtree: true });
@@ -94,7 +100,7 @@ export class Marker {
       referrer &&
       (CONSTANTS.URL_PATTERNS.FORUM.test(currentUrl) ||
         CONSTANTS.URL_PATTERNS.KEYWORDS.some((keyword) =>
-          currentUrl.includes(keyword)
+          currentUrl.includes(keyword),
         ) ||
         currentUrl.startsWith("magnet:"))
     ) {
@@ -131,7 +137,7 @@ export class Marker {
     const newLinks = links.filter(
       (link) =>
         !this.activeLinks.has(link as HTMLAnchorElement) &&
-        isMarkableLink(link as HTMLAnchorElement)
+        isMarkableLink(link as HTMLAnchorElement),
     );
 
     for (const link of newLinks) {
@@ -139,7 +145,7 @@ export class Marker {
     }
 
     await Promise.all(
-      newLinks.map((link) => this.checkAndMarkLink(link as HTMLAnchorElement))
+      newLinks.map((link) => this.checkAndMarkLink(link as HTMLAnchorElement)),
     );
   }
 
@@ -163,8 +169,8 @@ export class Marker {
     if (record) {
       await Promise.all(
         links.map((link) =>
-          this.markLink(url, link as HTMLAnchorElement, record)
-        )
+          this.markLink(url, link as HTMLAnchorElement, record),
+        ),
       );
     }
   }
