@@ -3,80 +3,72 @@ name: Release
 on:
   push:
     tags:
-      - "v*"  # Trigger on any tags starting with 'v'
+      - "v*"
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repository code
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Install pnpm
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
           run_install: false
 
-      # 3. Set up Node.js
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: "pnpm"
 
-      # 4. Install dependencies using pnpm
       - name: Install dependencies
         run: pnpm install
 
-      # 5. Build the project
       - name: Build project
-        run: pnpm run build
+        run: pnpm build
 
-      # 6. Create GitHub Release for the version
-      - name: Create GitHub Release
+      - name: Verify build output
+        run: |
+          echo "Listing dist directory contents:"
+          ls -la dist/
+
+      # Create versioned release
+      - name: Create versioned GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: |
-            dist/*  # Upload all files in the dist/ directory
+          artifacts: "dist/**/*"
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}  # The version tag (e.g., 'v1.0.9')
-          name: Release ${{ github.ref_name }}  # Release name (e.g., 'Release v1.0.9')
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           body: |
             Automatically generated changelog for ${{ github.ref_name }}.
             Here are the changes:
-            ${{ github.event.head_commit.message }}  # Commit message as the changelog
+            ${{ github.event.head_commit.message }}
 
-      # 7. Create and Push 'latest' tag to GitHub
-      - name: Create and Push latest Tag
+      # Update latest tag
+      - name: Update latest tag
         run: |
-          git fetch --tags  # Ensure we have the latest tags
-          git tag -f latest  # Force tag creation for 'latest'
-          git push origin latest --force  # Force push 'latest' tag to remote repository
+          git tag -f latest
+          git push origin latest --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 8. Create or Update 'latest' GitHub Release and upload assets
-      - name: Create or Update 'latest' GitHub Release
-        run: |
-          # Check if 'latest' release exists
-          RELEASE_EXISTS=$(gh release list --limit 100 | grep -w "latest")
-          
-          if [ -z "$RELEASE_EXISTS" ]; then
-            echo "Creating 'latest' release"
-            gh release create latest dist/* --title "Release latest" --notes "Automatically generated changelog for latest."
-          else
-            echo "Updating 'latest' release"
-            gh release upload latest dist/* --clobber
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # 9. Upload release assets to the versioned GitHub release
-      - name: Publish release assets
-        run: |
-          gh release upload ${{ github.ref_name }} dist/* --clobber  # Upload the built files to GitHub Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Create/Update latest release
+      - name: Create/Update latest Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/**/*"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: latest
+          name: Latest Release
+          body: |
+            Latest release (updated from ${{ github.ref_name }})
+          allowUpdates: true
+          replacesArtifacts: true
