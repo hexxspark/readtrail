@@ -1,5 +1,12 @@
 
 
+# [1.1.0](https://git.mylaby.com/hexxspark/readtrail/compare/v1.0.15...v1.1.0) (2024-11-15)
+
+
+### Features
+
+* update script name and improve link marking logic with additional checks ([a80c812](https://git.mylaby.com/hexxspark/readtrail/commits/a80c8129bf944c514e996d32d4585017b84d80ac))
+
 # [1.1.0](https://git.mylaby.com/hexxspark/readtrail/compare/v1.0.14...v1.1.0) (2024-11-15)
 
 
