@@ -1,15 +1,16 @@
 {
-  "name": "ReadTrail - Forum Read Trail",
-  "name:zh-CN": "论坛已读标记器",
-  "description": "Automatically mark forum posts as read",
-  "description:zh-CN": "自动标记论坛已读帖子",
+  "name": { 
+    "": "ReadTrail - Read Trail", 
+    "zh": "已读标记器" 
+  },
+  "description": {
+    "": "Automatically mark posts as read",
+    "zh": "自动标记已读帖子"
+  },
   "namespace": "https://github.com/hexxspark",
   "match": ["*://*/*"],
   "run-at": "document-end",
   "homepage": "https://github.com/hexxspark/readtrail",
   "supportURL": "https://github.com/hexxspark/readtrail/issues",
-  "grant": [
-    "GM.getValue", 
-    "GM.setValue"
-  ]
+  "grant": ["GM.getValue", "GM.setValue"]
 }
