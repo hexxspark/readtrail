@@ -19,6 +19,13 @@ To install Readtrail, follow these steps:
 3. Copy and paste the script code from the repository into the Tampermonkey editor.
 4. Save the script and enable it.
 
+Alternatively, you can install the script directly from the release page:
+
+[Install Readtrail Script](https://github.com/hexxspark/readtrail/releases/latest/download/readtrail.user.js)
+
+Click the link above to open the script in Tampermonkey/Violentmonkey and follow the prompts to install it.
+
+
 ## Usage
 
 Once installed, the script will automatically mark posts as read based on your browsing activity. You can customize the behavior through the Tampermonkey settings.
