@@ -17,7 +17,7 @@ To install Readtrail, follow these steps:
 1. Install [Tampermonkey](https://www.tampermonkey.net/), [Violentmonkey](https://violentmonkey.github.io/), or [Greasemonkey](https://www.greasespot.net/) from the browser extension store.
 2. Click the link below to install the script directly from the release page:
 
-[Install Readtrail Script](https://github.com/hexxspark/readtrail/releases/download/latest/readtrail.user.js)
+[Install ReadTrail Script](https://github.com/hexxspark/readtrail/releases/download/latest/readtrail.user.js)
 
 Click the link above to open the script in Tampermonkey/Violentmonkey/Greasemonkey and follow the prompts to install it.
 
