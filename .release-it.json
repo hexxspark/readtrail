@@ -13,11 +13,12 @@
     "push": true
   },
   "npm": {
-    "publish": false
+    "publish": false,
+    "ignoreVersion": true,
+    "skipChecks": true
   },
   "github": {
-    "release": false,
-    "token": "${GITHUB_TOKEN}"
+    "release": false
   },
   "hooks": {
     "before:git:release": "pnpm run build"
