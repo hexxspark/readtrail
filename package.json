@@ -22,7 +22,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "prebuild": "rimraf dist && pnpm format",
+    "prebuild": "rimraf dist",
     "format": "prettier --write .",
     "release": "release-it"
   },
