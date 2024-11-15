@@ -21,10 +21,9 @@ To install Readtrail, follow these steps:
 
 Alternatively, you can install the script directly from the release page:
 
-[Install Readtrail Script](https://github.com/hexxspark/readtrail/releases/latest/download/readtrail.user.js)
+[Install Readtrail Script](https://github.com/hexxspark/readtrail/releases/download/latest/readtrail.user.js)
 
 Click the link above to open the script in Tampermonkey/Violentmonkey and follow the prompts to install it.
-
 
 ## Usage
 

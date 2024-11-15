@@ -30,9 +30,11 @@ jobs:
       - name: Build project
         run: pnpm run build
 
-      - name: Upload Release Assets
+      - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
+          artifacts: |
+            dist/*          
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }} 
           name: Release ${{ github.ref_name }}
@@ -40,6 +42,13 @@ jobs:
             Automatically generated changelog for ${{ github.ref_name }}.
             Here are the changes:
             ${{ github.event.head_commit.message }}
+
+      - name: Create and Push latest Tag
+        run: |
+          git tag latest
+          git push origin latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish release assets
         run: |
