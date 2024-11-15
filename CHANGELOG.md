@@ -1,5 +1,12 @@
 
 
+# [1.1.0](https://git.mylaby.com/hexxspark/readtrail/compare/v1.0.14...v1.1.0) (2024-11-15)
+
+
+### Features
+
+* enhance link validation with additional checks for time and metadata elements ([09ae40d](https://git.mylaby.com/hexxspark/readtrail/commits/09ae40d258f2cc6057eb490edb8ebe92e717479a))
+
 ## [1.0.14](https://git.mylaby.com/hexxspark/readtrail/compare/v1.0.13...v1.0.14) (2024-11-15)
 
 ## [1.0.13](https://git.mylaby.com/hexxspark/readtrail/compare/v1.0.12...v1.0.13) (2024-11-15)
