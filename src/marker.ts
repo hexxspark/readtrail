@@ -44,13 +44,22 @@ export class Marker {
       timestamp: Date.now(),
     });
 
+    // 触发一个自定义事件来通知其他标签页
+    this.triggerSyncEvent();
     await this.updateAllMatchingLinks(url);
+  }
+
+  private triggerSyncEvent(): void {
+    // 使用 localStorage 触发跨标签页同步
+    localStorage.setItem(CONSTANTS.SYNC_EVENT, JSON.stringify({ timestamp: Date.now() }));
+    localStorage.removeItem(CONSTANTS.SYNC_EVENT);
   }
 
   private bindEvents(): void {
     document.addEventListener("click", this.handleClick.bind(this));
     document.addEventListener("auxclick", this.handleClick.bind(this));
     window.addEventListener("storage", this.handleStorageEvent.bind(this));
+    document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this));
 
     const observer = new MutationObserver(this.handleMutations.bind(this));
     observer.observe(document.body, { childList: true, subtree: true });
@@ -67,6 +76,14 @@ export class Marker {
       (event.type === "click" && !event.ctrlKey && !event.metaKey)
     ) {
       this.markAsRead(target.href);
+    }
+  }
+
+  private handleVisibilityChange(): void {
+    if (document.visibilityState === "visible") {
+      log.debug("Page became visible, refreshing links");
+      // Refresh all link states when page becomes visible
+      setTimeout(() => this.refreshLinks(), 100);
     }
   }
 
@@ -89,8 +106,8 @@ export class Marker {
     log.debug("Storage event detected:", event.key);
     if (event.key !== CONSTANTS.SYNC_EVENT) return;
     try {
-      const value = JSON.parse(event.newValue || "{}");
-      setTimeout(() => this.refreshLinks(), 100);
+      // Refresh link states immediately, remove delay
+      this.refreshLinks();
     } catch (error) {
       log.error("Storage update error:", error);
     }
@@ -153,10 +170,9 @@ export class Marker {
   }
 
   private refreshLinks(): void {
-    const unreadLinks = Array.from(this.activeLinks).filter(
-      (link) => !link.classList.contains("rt-read")
-    );
-    unreadLinks.forEach((link) => {
+    log.debug("Refreshing all links");
+    const allLinks = Array.from(this.activeLinks);
+    allLinks.forEach((link) => {
       this.checkAndMarkLink(link);
     });
   }

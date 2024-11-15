@@ -8,6 +8,7 @@ export class StyleManager {
         margin: 2px 0 !important;
         border-radius: 4px !important;
         background-color: var(--rt-bg-color, rgba(0, 0, 0, 0.08)) !important;
+        color: var(--rt-font-color) !important; 
         box-decoration-break: clone !important;
         -webkit-box-decoration-break: clone !important;
         vertical-align: text-top !important;
@@ -97,12 +98,16 @@ export class StyleManager {
       if (isDark) {
         return {
           backgroundColor: 'rgba(255, 255, 255, 0.12)',
-          accentColor: 'rgba(187, 134, 252, 0.85)'  // Light purple
+          accentColor: 'rgba(128, 128, 128, 0.85)',  // Gray
+          fontColor: 'rgba(255, 255, 255, 0.2)',     // Lightened font color
+          fontWeight: 'normal'                       // Normal font weight
         };
       } else {
         return {
           backgroundColor: 'rgba(0, 0, 0, 0.06)',
-          accentColor: 'rgba(33, 150, 243, 0.75)'   // Blue
+          accentColor: 'rgba(128, 128, 128, 0.85)',  // Gray
+          fontColor: 'rgba(0, 0, 0, 0.2)',           // Lightened font color
+          fontWeight: 'normal'                       // Normal font weight
         };
       }
     }
@@ -116,6 +121,8 @@ export class StyleManager {
         const colors = this.getThemeColors(link);
         link.style.setProperty('--rt-bg-color', colors.backgroundColor);
         link.style.setProperty('--rt-accent-color', colors.accentColor);
+        link.style.setProperty('--rt-font-color', colors.fontColor);
+        link.style.setProperty('--rt-font-weight', colors.fontWeight);
         
         link.classList.add("rt-read");
         
