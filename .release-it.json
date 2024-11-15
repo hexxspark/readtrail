@@ -1,6 +1,8 @@
 {
   "plugins": {
-    "release-it-pnpm": {},
+    "release-it-pnpm": {
+      "publish": false
+    },
     "@release-it/conventional-changelog": {
       "preset": "angular",
       "infile": "CHANGELOG.md"
