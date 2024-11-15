@@ -22,7 +22,8 @@
     "dev": "vite",
     "build": "vite build",
     "prebuild": "rimraf dist && npm run format",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "release": "release-it"
   },
   "devDependencies": {
     "@types/tampermonkey": "^5.0.3",
