@@ -1,5 +1,3 @@
-
-
 ## [1.0.4](https://git.mylaby.com/hexxspark/readtrail/compare/1.0.3...1.0.4) (2024-11-15)
 
 ## [1.0.3](https://git.mylaby.com/hexxspark/readtrail/compare/1.0.2...1.0.3) (2024-11-15)

@@ -10,7 +10,7 @@
     }
   },
   "git": {
-    "tag": "v${version}",
+    "tagName": "v${version}",
     "commitMessage": "chore(release): Release ${version}",
     "commit": true,
     "push": true
