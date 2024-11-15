@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "readtrail",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "type": "module",
   "description": "A userscript to auto mark posts as ready for tampermonkey/violentmonkey/greasemonkey",
   "author": "HexxSpark",
