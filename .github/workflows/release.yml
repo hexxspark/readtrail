@@ -32,12 +32,11 @@ jobs:
         run: pnpm install
 
       - name: Build project
-        run: pnpm build
+        run: pnpm run build
 
-      - name: Verify build output
+      - name: Prepare release assets
         run: |
-          echo "Listing dist directory contents:"
-          ls -la dist/
+          cp dist/readtrail.user.js dist/readtrail-latest.user.js
 
       # Create versioned release
       - name: Create versioned GitHub Release
