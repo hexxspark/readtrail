@@ -1,6 +1,10 @@
 {
+  "plugins": {
+    "release-it-pnpm": {}
+  },
   "git": {
     "tag": "v${version}",
+    "commitMessage": "chore(release): Release ${version}",
     "commit": true,
     "push": true
   },
@@ -16,8 +20,5 @@
   },
   "hooks": {
     "before:git:release": "pnpm run build"
-  },
-  "prompt": {
-    "commitMessage": "chore(release): Release ${version}"
   }
 }
