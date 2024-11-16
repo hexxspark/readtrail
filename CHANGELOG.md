@@ -1,5 +1,12 @@
 
 
+## [1.0.17](https://git.mylaby.com/hexxspark/readtrail/compare/v1.0.16...v1.0.17) (2024-11-16)
+
+
+### Bug Fixes
+
+* update metadata structure by renaming 'exclude' to 'exclude-match' ([2a96fba](https://git.mylaby.com/hexxspark/readtrail/commits/2a96fba866611188f6d927211b81ab0a3aad52a3))
+
 # [1.1.0](https://git.mylaby.com/hexxspark/readtrail/compare/v1.0.15...v1.1.0) (2024-11-15)
 
 
