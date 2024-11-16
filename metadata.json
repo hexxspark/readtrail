@@ -12,9 +12,8 @@
   "homepage": "https://github.com/hexxspark/readtrail",
   "supportURL": "https://github.com/hexxspark/readtrail/issues",
   "downloadURL": "https://github.com/hexxspark/readtrail/releases/latest/download/readtrail.user.js",
-  "updateUrl": "https://github.com/hexxspark/readtrail/releases/latest/download/readtrail.user.js",
   "match": ["*://*/*"],
-  "exclude": [
+  "exclude-match": [
     "*://localhost/*",
     "*://*.google.*/*",
     "*://*.youtube.*/*",
