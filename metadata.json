@@ -122,7 +122,8 @@
     "*://*.expedia.com/*",
     "*://*.walmart.com/*",
     "*://*.target.com/*",
-    "*://*.costco.com/*"
+    "*://*.costco.com/*",
+    "*://*.npmjs.*/*"
   ],
   "grant": ["GM.getValue", "GM.setValue"]
 }
