@@ -123,7 +123,10 @@
     "*://*.walmart.com/*",
     "*://*.target.com/*",
     "*://*.costco.com/*",
-    "*://*.npmjs.*/*"
+    "*://*npmjs.*/*",
+    "*://*claude.ai/*",
+    "*://*openai.com/*",
+    "*://*chatgpt*/*"
   ],
   "grant": ["GM.getValue", "GM.setValue"]
 }
