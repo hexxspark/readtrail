@@ -1,5 +1,13 @@
 
 
+# [1.1.0](https://git.mylaby.com/hexxspark/readtrail/compare/v1.0.17...v1.1.0) (2024-11-21)
+
+
+### Features
+
+* add npmjs domain to metadata exculde list ([c7cff16](https://git.mylaby.com/hexxspark/readtrail/commits/c7cff16f39205fdb077de63723136c7210e541c1))
+* update metadata to include additional domains for exclusion ([abf4ca1](https://git.mylaby.com/hexxspark/readtrail/commits/abf4ca149c021978269835a7a82fa3ae8adc1031))
+
 ## [1.0.17](https://git.mylaby.com/hexxspark/readtrail/compare/v1.0.16...v1.0.17) (2024-11-16)
 
 
